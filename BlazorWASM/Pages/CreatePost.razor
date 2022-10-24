@@ -1,0 +1,100 @@
+﻿@page "/CreatePost"
+@using Domain.DTOs
+@using Domain.Models
+@using HttpClients.ClientInterfaces
+@inject IUserService _userService
+@inject IPostService _postService
+@inject NavigationManager navMgr
+@using UIComponents
+<div class="card">
+    @if (_users == null)
+    {
+        <label>Loading users...</label>
+    }
+    else if (!_users.Any())
+    {
+        <label>No login, cannot create a post without loging in.</label>
+    }
+    else
+    {
+        <h3>Create Post</h3>
+        <div class="form-group field">
+            <label>Title:</label>
+            <input type="text" @bind="postTitle"/>
+        </div>
+        <div class="form-group field">
+            <label>Body:</label>
+            <input type="text" @bind="postBody"/>
+        </div>
+        <div class="button-row">
+            @if (!string.IsNullOrEmpty(msg))
+            {
+                <label style="color: red">@msg</label>
+            }
+            <button @onclick="Create" class="acceptbtn">Create</button>
+        </div>
+        <Modal ShowModal="showModal">
+            <p>You have successfully created a new post!</p>
+            <button @onclick="@Proceed">Wonderful</button>
+        </Modal>
+    }
+</div>
+
+@code {
+    private IEnumerable<User>? _users;
+    private int? creatorId;
+    private string username = "";
+    private string postTitle = "";
+    private string postBody = "";
+    private string msg = "";
+
+    private bool showModal;
+
+    protected override async Task OnInitializedAsync()
+    {
+        msg = "";
+        try
+        {
+            _users = await _userService.GetUsers();
+            creatorId = _users.First(u => u.Username.Equals(username)).Id;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = e.Message;
+        }
+    }
+
+    private async Task Create()
+    {
+        msg = "";
+        if (string.IsNullOrEmpty(postTitle))
+        {
+            msg = "Title cannot be empty!";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(postBody))
+        {
+            msg = "Body cannot be empty!";
+            return;
+        }
+
+        try
+        {
+            PostCreationDTO dto = new PostCreationDTO((int)creatorId, postTitle, postBody);
+            await _postService.CreateAsync(dto);
+            showModal = true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = e.Message;
+        }
+    }
+    private void Proceed()
+    {
+        showModal = false;
+        navMgr.NavigateTo("/ViewPosts");
+    }
+}
