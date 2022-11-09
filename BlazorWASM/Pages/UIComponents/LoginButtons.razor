@@ -1,0 +1,26 @@
+﻿@using BlazorWASM.Services
+@namespace Login
+@inject NavigationManager navMgr
+@inject IAuthService _authService
+
+<AuthorizeView>
+    <Authorized>
+        <img class="icon" src="icons/Logout.png" @onclick="Logout"/>
+    </Authorized>
+    <NotAuthorized>
+        <img class="icon" src="icons/Login.png" @onclick="Login"/>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private void Login()
+    {
+        navMgr.NavigateTo("/Login");
+    }
+
+    private async Task Logout()
+    {
+        await _authService.LogoutAsync();
+        navMgr.NavigateTo("/");
+    }
+}

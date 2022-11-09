@@ -1,4 +1,6 @@
-﻿namespace Domain.DTOs;
+﻿using Domain.Models;
+
+namespace Domain.DTOs;
 
 public class PostBasicDTO
 {

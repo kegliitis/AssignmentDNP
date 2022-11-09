@@ -1,4 +1,5 @@
 ﻿@page "/CreatePost"
+@attribute [Authorize]
 @using Domain.DTOs
 @using Domain.Models
 @using HttpClients.ClientInterfaces
@@ -6,18 +7,12 @@
 @inject IPostService _postService
 @inject NavigationManager navMgr
 @using UIComponents
-<div class="card">
-    @if (_users == null)
-    {
-        <label>Loading users...</label>
-    }
-    else if (!_users.Any())
-    {
-        <label>No login, cannot create a post without loging in.</label>
-    }
-    else
-    {
-        <h3>Create Post</h3>
+@using System.Security.Claims
+
+@if (isLoggedIn)
+{
+    <div class="card">
+        <h3>Create Post, @username </h3>
         <div class="form-group field">
             <label>Title:</label>
             <input type="text" @bind="postTitle"/>
@@ -31,41 +26,52 @@
             {
                 <label style="color: red">@msg</label>
             }
-            <button @onclick="Create" class="acceptbtn">Create</button>
+            <button @onclick="CreateAsync" class="acceptbtn">Create</button>
         </div>
         <Modal ShowModal="showModal">
             <p>You have successfully created a new post!</p>
             <button @onclick="@Proceed">Wonderful</button>
         </Modal>
-    }
-</div>
+    </div>
+}
+else
+{
+    <p>You are not logged in!</p>
+}
 
 @code {
-    private IEnumerable<User>? _users;
-    private int? creatorId;
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; } = null!;
+
+    private IEnumerable<Claim>? userClaims;
+    private bool isLoggedIn;
     private string username = "";
     private string postTitle = "";
     private string postBody = "";
     private string msg = "";
+    private int creatorId;
 
     private bool showModal;
 
     protected override async Task OnInitializedAsync()
     {
-        msg = "";
-        try
-        {
-            _users = await _userService.GetUsers();
-            creatorId = _users.First(u => u.Username.Equals(username)).Id;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            msg = e.Message;
-        }
+        AuthenticationState authState = await AuthState;
+        ClaimsPrincipal user = authState.User;
+        isLoggedIn = user.Identity != null;
+        
+        if (!isLoggedIn)
+            return;
+       
+        userClaims = user.Claims;
+      
+        username = user.Identity!.Name!;
+        creatorId = Int32.Parse(user.Claims.FirstOrDefault(c => c.Type.Equals("Id"))!.Value);
+
+
     }
 
-    private async Task Create()
+    private async Task CreateAsync()
     {
         msg = "";
         if (string.IsNullOrEmpty(postTitle))
@@ -73,16 +79,16 @@
             msg = "Title cannot be empty!";
             return;
         }
-
+    
         if (string.IsNullOrEmpty(postBody))
         {
             msg = "Body cannot be empty!";
             return;
         }
-
+    
         try
         {
-            PostCreationDTO dto = new PostCreationDTO((int)creatorId, postTitle, postBody);
+            PostCreationDTO dto = new PostCreationDTO(creatorId, postTitle, postBody);
             await _postService.CreateAsync(dto);
             showModal = true;
         }
@@ -92,9 +98,11 @@
             msg = e.Message;
         }
     }
+
     private void Proceed()
     {
         showModal = false;
-        navMgr.NavigateTo("/ViewPosts");
+        navMgr.NavigateTo("/");
     }
+
 }

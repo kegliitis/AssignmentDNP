@@ -1,8 +1,13 @@
+using System.Text;
 using Application.DAOInterfaces;
 using Application.Logic;
 using Application.LogicInterfaces;
+using Domain.Auth;
 using FileData;
 using FileData.DAOs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +23,23 @@ builder.Services.AddScoped<IUserDAO, UserFileDAO>();
 builder.Services.AddScoped<IUserLogic, UserLogic>();
 builder.Services.AddScoped<IPostDAO, PostFileDAO>();
 builder.Services.AddScoped<IPostLogic, PostLogic>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT:Audience"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
+    };
+});
+
+AuthorizationPolicies.AddPolicies(builder.Services);
 
 var app = builder.Build();
 
@@ -35,6 +57,8 @@ app.UseCors(x => x
     .AllowCredentials());
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -26,45 +26,65 @@
 </div>
 
 <div>
-    <button @onclick="LoadTodos">Load</button>
+    <button @onclick="LoadPosts">Load</button>
 </div>
 
+@* @if (posts == null) *@
+@* { *@
+@* } *@
+@* else if (!posts.Any()) *@
+@* { *@
+@*     <p>No posts to display</p> *@
+@* } *@
+@* else *@
+@* { *@
+@*     <table class="table"> *@
+@*         <thead> *@
+@*         <tr> *@
+@*             <th>Title</th> *@
+@*             <th>Creator</th> *@
+@*             <th>Edit</th> *@
+@*             <th>Delete</th> *@
+@*         </tr> *@
+@*         </thead> *@
+@*         <tbody> *@
+@*         @foreach (var item in posts) *@
+@*         { *@
+@*             <tr> *@
+@*                 <td>@item.Title</td> *@
+@*                 <td>@item.Creator.Username</td> *@
+@*                 <td> *@
+@*                     <img src="icons/edit.gif" class="funnel" @onclick="@(() => navMgr.NavigateTo($"/EditPost/{item.Id}"))"/> *@
+@*                 </td> *@
+@*                 <td> *@
+@*                     <label @onclick="@(() => RemovePost(item.Id))" style="cursor:pointer; color: red; font-weight: bold"> *@
+@*                         &#x2717; *@
+@*                     </label> *@
+@*                 </td> *@
+@*             </tr> *@
+@*         } *@
+@*         </tbody> *@
+@*     </table> *@
+@* } *@
 @if (posts == null)
 {
+    <span>Loading..</span>
 }
 else if (!posts.Any())
 {
-    <p>No posts to display</p>
+    <span>No users to be found</span>
 }
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Creator</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in posts)
+    <div class="posts-container">
+        @foreach (Post post in posts)
         {
-            <tr>
-                <td>@item.Title</td>
-                <td>@item.Creator.Username</td>
-                <td>
-                    <img src="icons/edit.gif" class="funnel" @onclick="@(() => navMgr.NavigateTo($"/EditTodo/{item.Id}"))"/>
-                </td>
-                <td>
-                    <label @onclick="@(() => RemovePost(item.Id))" style="cursor:pointer; color: red; font-weight: bold">
-                        &#x2717;
-                    </label>
-                </td>
-            </tr>
+            <div class="post-card" @onclick="@(() => navMgr.NavigateTo($"ViewPost/{@post.Id}"))">
+                <label class="title"><b>@post.Title</b></label>
+                <label class="creator">by @post.Creator.Username</label>
+            </div>
         }
-        </tbody>
-    </table>
+    </div>
 }
 @if (!string.IsNullOrEmpty(msg))
 {
@@ -80,8 +100,16 @@ else
     private string? titleFilter;
     private string? bodyFilter;
 
-    private async Task LoadTodos()
+    protected override async Task OnInitializedAsync()
     {
+        {
+            await LoadPosts();
+        }
+    }
+
+    private async Task LoadPosts()
+    {
+        msg = "";
         try
         {
             posts = await _postService.GetAsync(usernameFilter, titleFilter, bodyFilter);

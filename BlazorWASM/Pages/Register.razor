@@ -1,7 +1,9 @@
-﻿@page "/CreateUser"
+﻿@page "/Register"
 @using HttpClients.ClientInterfaces
 @using Domain.DTOs
-@inject IUserService _userService
+@using BlazorWASM.Services
+@inject IAuthService _authService
+@inject NavigationManager navMgr;
 <div class="card">
     <h3>Create User</h3>
     <div class="form-group field">
@@ -31,10 +33,12 @@
 
         try
         {
-            await _userService.Create(new UserCreationDTO(username, password));
+            await _authService.RegisterAsync(new UserCreationDTO(username, password));
             username = "";
+            password = "";
             resultMsg = "User successfully created";
             color = "green";
+            navMgr.NavigateTo("/login");
         }
         catch (Exception e)
         {

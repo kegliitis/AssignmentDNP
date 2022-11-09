@@ -54,4 +54,22 @@ public class UserFileDAO : IUserDAO
         User? existing = _fileContext.Users.FirstOrDefault(u => u.Id == id);
         return Task.FromResult(existing);
     }
+
+    public Task<User?> ValidateUser(UserValidationDTO dto)
+    {
+        User? user = null;
+        User? existing = _fileContext.Users.FirstOrDefault(u => u.Username.Equals(dto.Username));
+
+        if (existing != null && existing.Username.Equals(dto.Username) && existing.Password.Equals(dto.Password))
+        {
+            user = new User
+            {
+                Id = existing.Id,
+                Username = existing.Username,
+                Password = existing.Password
+            };
+        }
+
+        return Task.FromResult(user);
+    }
 }

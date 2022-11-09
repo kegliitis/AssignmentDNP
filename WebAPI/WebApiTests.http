@@ -1,0 +1,9 @@
+﻿POST http://localhost:7201/Auth/login
+Content-Type: application/json
+
+{ "username" : "admin", "password" : "admin" }
+
+###
+
+GET http://localhost:7201/test/authorized
+Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKV1RTZXJ2aWNlQWNjZXNzVG9rZW4iLCJqdGkiOiI0ZWQ2ZjliMS03OTk4LTQwYzUtOGJkZS1jZDQ0Y2ZkZjkzOGEiLCJpYXQiOiIwNy4xMS4yMDIyIDEyOjQwOjA3IiwiSWQiOiIzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6ImFkbWluIiwiZXhwIjoxNjY3OTExMjA3LCJpc3MiOiJKV1RBdXRoZW50aWNhdGlvblNlcnZlciIsImF1ZCI6IkpXVFNlcnZpY2VCbGF6b3JXYXNtQ2xpZW50In0.AK1EjJiBlRQVLkOICF5HWOt95nGQlL-5IZXuGSU5tOOZbybFTaTKejqeQWCcwBH5ScY5lIT-yWy90n0d1HydpA
