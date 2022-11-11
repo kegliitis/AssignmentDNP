@@ -9,8 +9,26 @@
     border-radius: 15px;
 }
 
+.card-post
+{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    width: 50%;
+    padding: 25px;
+    text-align: center;
+    margin: auto;
+    margin-top: 50px;
+    border-radius: 15px;
+}
+
 .field {
     margin-top: 20px;
+}
+
+
+.form-group
+{
+    text-align: center;
 }
 
 .acceptbtn {
@@ -21,6 +39,24 @@
     padding-right: 10px;
 }
 
+
 .button-row {
     margin-top: 15px;
+}
+.form-body
+{
+    height: 300px;
+}
+
+label{
+    vertical-align: top;
+    
+}
+input
+{
+   width: 100%
+}
+textarea
+{
+    width: 100%;
 }

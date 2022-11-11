@@ -11,15 +11,15 @@
 
 @if (isLoggedIn)
 {
-    <div class="card">
+    <div class="card-post">
         <h3>Create Post, @username </h3>
         <div class="form-group field">
             <label>Title:</label>
             <input type="text" @bind="postTitle"/>
         </div>
         <div class="form-group field">
-            <label>Body:</label>
-            <input type="text" @bind="postBody"/>
+            <label>Body</label>
+            <textarea class="form-body" type="text" @bind="postBody"/>
         </div>
         <div class="button-row">
             @if (!string.IsNullOrEmpty(msg))
