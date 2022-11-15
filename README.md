@@ -1,5 +1,5 @@
 # AssignmentDNP
-~~ We tried to do the assignment~~
+~~We tried to do the assignment~~
 ### We did the assignment!
 
 YouTube show-off can be seen [here](https://www.youtube.com/watch?v=9eECVY-Ii7A)
