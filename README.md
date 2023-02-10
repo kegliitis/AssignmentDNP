@@ -2,6 +2,7 @@
 ~~We tried to do the assignment~~
 ### We did the assignment!
 ***GitHub commit messages and overall VCS usage is not a proper way, so it is advised to not take it as an example***
+
 YouTube show-off can be seen [here](https://www.youtube.com/watch?v=9eECVY-Ii7A)
 
 We forgot to put .idea files to gitignore, whoops.
